@@ -1,0 +1,18 @@
+[project]
+name = "securewipe"
+version = "1.0.0"
+description = "Secure E-Waste Data Wiping Platform – local secure deletion with AI-assisted sensitive-data detection, verification, audit logging, and cryptographically signed certificates."
+requires-python = ">=3.9"
+dependencies = [
+    "openai>=1.0.0",
+    "cryptography>=41.0.0",
+    "customtkinter>=5.2.2",
+    "pillow>=10.0.0",
+    "psutil>=5.9.0",
+    "qrcode[pil]>=7.4.0",
+    "reportlab>=4.0.0",
+    "requests>=2.31.0",
+]
+
+[project.scripts]
+securewipe = "main:main"

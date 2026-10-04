@@ -1,0 +1,10 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { API } from "@/lib/api";
+
+export default function AuthForm({ register=false }: {register?: boolean}) {
+  const [email,setEmail]=useState(""); const [password,setPassword]=useState(""); const [error,setError]=useState(""); const [busy,setBusy]=useState(false); const router=useRouter();
+  async function submit(e:React.FormEvent) { e.preventDefault(); setBusy(true);setError(""); try { const r=await fetch(`${API}/api/auth/${register?"register":"login"}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password})}); const data=await r.json(); if(!r.ok) throw new Error(data.detail||"Authentication failed"); sessionStorage.setItem("securewipe_token",data.access_token);router.push("/dashboard"); } catch(e) {setError(e instanceof Error?e.message:"Unable to sign in");} finally{setBusy(false);} }
+  return <form onSubmit={submit} className="mx-auto mt-16 max-w-md space-y-5 rounded-2xl border border-slate-800 bg-slate-900 p-8"><h1 className="text-3xl font-bold">{register?"Create account":"Sign in"}</h1><p className="text-sm text-slate-400">SecureWipe account required for private job and certificate history.</p><label className="block text-sm">Email<input required type="email" autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)} className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-950 p-3" /></label><label className="block text-sm">Password<input required minLength={register?12:1} type="password" autoComplete={register?"new-password":"current-password"} value={password} onChange={e=>setPassword(e.target.value)} className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-950 p-3" />{register&&<small className="text-slate-500">Use at least 12 characters.</small>}</label>{error&&<p role="alert" className="text-sm text-red-300">{error}</p>}<button disabled={busy} className="w-full rounded-lg bg-emerald-400 p-3 font-bold text-slate-950 disabled:opacity-50">{busy?"Please wait…":register?"Register":"Sign in"}</button></form>;
+}
