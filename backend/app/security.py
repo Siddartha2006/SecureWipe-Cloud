@@ -2,7 +2,8 @@ import hashlib
 import hmac
 import secrets
 from datetime import datetime, timedelta, timezone
-from jose import jwt, JWTError
+import jwt
+from jwt import InvalidTokenError
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
@@ -38,7 +39,7 @@ def current_user(credentials: HTTPAuthorizationCredentials | None = Depends(bear
         raise HTTPException(status_code=401, detail="Authentication required")
     try:
         user_id = jwt.decode(credentials.credentials, settings.jwt_secret, algorithms=[ALGORITHM]).get("sub")
-    except JWTError:
+    except InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid or expired session")
     user = db.get(User, user_id)
     if not user:
